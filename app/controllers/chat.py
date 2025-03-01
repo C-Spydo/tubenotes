@@ -8,9 +8,9 @@ from ..helpers import create_response
 from ..constants import SUCCESS_MESSAGE
 from ..enums import CustomStatusCode
 
-@routes_blueprint.route('/chat-history', methods=['GET'])
-def fetch_chat_history():
-    response = chat.fetch_chat_history(request.args.get('username'))
+@routes_blueprint.route('/start-chat', methods=['POST'])
+def start_chat():
+    response = chat.start_chat(request.get_json())
     return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE, response), 200
 
 @routes_blueprint.route('/chat', methods=['POST'])

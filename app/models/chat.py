@@ -19,23 +19,23 @@ class Chat(database.Model):
         return f'<Chat {self.id}>'
 
     
-def  serialize(self):
-        return {
-            'id': self.id,
-            "character_name": self.character_name,
-            "title": self.title,
-            "memory": self.deserialize_chat_memory()
-        }
-    
-def save_chat_memory(self, memory):
-    self.memory = jsonpickle.encode(memory)
-    session.commit()
+    def  serialize(self):
+            return {
+                'id': self.id,
+                "character_name": self.character_name,
+                "title": self.title,
+                "memory": self.deserialize_chat_memory()
+            }
+        
+    def update_chat_memory(self, memory):
+        self.memory = jsonpickle.encode(memory)
+        session.commit()
 
-def deserialize_chat_memory(self):
-    if not self.memory:
-        return None 
-    try:
-        return jsonpickle.decode(self.memory)
-    except Exception as e:
-        print(f"Error decoding chat memory: {e}")
-        return None
+    def deserialize_chat_memory(self):
+        if not self.memory:
+            return None 
+        try:
+            return jsonpickle.decode(self.memory)
+        except Exception as e:
+            print(f"Error decoding chat memory: {e}")
+            return None

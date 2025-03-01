@@ -1,56 +1,35 @@
+import jsonpickle
 from langchain.memory import ConversationBufferMemory
 from langchain_groq import ChatGroq
+from app.dtos.chat_setting import ChatSetting
 from app.repository.user import get_user_by_username
 from ..extensions.database import session
 from langchain.chains.conversation.base import ConversationChain
 from app.helpers import add_record_to_database, create_response
-from app.models import User
+from app.models import User, Chat
+from langchain_core.messages import SystemMessage
 from langchain.prompts import PromptTemplate
 from ..dtos.message_request import MessageRequest
 from flask import abort
 
-
-def fetch_chat_history(username: str):
-    user = get_user_by_username(username)
-
-    if user is None:
-        user = User(username=username)
-        add_record_to_database(user)
-
-    serialized_user = user.serialize()
-
-    chat_memory = serialized_user['chat_memory']
-
-    if chat_memory is not None:
-        serialized_user['chat_memory'] = chat_memory.load_memory_variables({})["history"]
-
-    return serialized_user
+# def start_chat(request: ChatSetting):
 
 
-def prompt_bot(request: MessageRequest):
-    user = get_user_by_username(request['username'])
+def start_chat(request: ChatSetting):
+    user = validate_user(request['username'])
 
-    if user is None:
-        raise abort(404, "User not found")
-
-    chat_memory = user.serialize()['chat_memory']
-
-    if chat_memory is None:
-        chat_memory = create_chat_memory()
+    chat_memory = create_chat_memory()
+    chat_memory.chat_memory.add_message(SystemMessage(content=f"You are a {request['character_description']} named {request['character_name']}, engage this user in a conversation"))
     
-
-    langchain_conversation = ConversationChain(
-        llm=get_llm(),
-        memory=chat_memory,
-        prompt=get_prompt_template(request['system_message'])
-    )
+    langchain_conversation = create_conversation_chain(get_llm(), chat_memory)
 
     ai_response = langchain_conversation.predict(input=request['prompt'])
 
-    user.save_chat_memory(chat_memory)
-    session.commit()
+    chat = Chat(user_id=user.id, character_name=request['character_name'], memory=jsonpickle.encode(chat_memory))
+    add_record_to_database(chat)
 
-    return {"ai_response": ai_response, "chat_memory": chat_memory.load_memory_variables({})["history"]}
+    return {"chat_id": chat.id, "chat_history": chat_memory.load_memory_variables({})["history"] ,"ai_response": ai_response}
+
 
 def get_llm():
     llm = ChatGroq(
@@ -74,6 +53,12 @@ def get_prompt_template(character: str):
         )
     )
 
+def create_conversation_chain(llm, chat_memory):
+    return ConversationChain(
+        llm=llm,
+        memory=chat_memory
+    )
+
 def create_chat_memory():
     return ConversationBufferMemory(
             memory_key="history",
@@ -81,3 +66,11 @@ def create_chat_memory():
             ai_prefix="AI",
             human_prefix="User"
         )
+
+def validate_user(username: str):
+    user = get_user_by_username(username)
+
+    if user is None:
+        raise abort(404, "User not found")
+    
+    return user
