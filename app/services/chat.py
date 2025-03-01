@@ -1,5 +1,6 @@
 from langchain.memory import ConversationBufferMemory
 from langchain_groq import ChatGroq
+from app.repository.user import get_user_by_username
 from ..extensions.database import session
 from langchain.chains.conversation.base import ConversationChain
 from app.helpers import add_record_to_database, create_response
@@ -50,9 +51,6 @@ def prompt_bot(request: MessageRequest):
     session.commit()
 
     return {"ai_response": ai_response, "chat_memory": chat_memory.load_memory_variables({})["history"]}
-
-def get_user_by_username(username: str):
-    return User.query.filter_by(username=username).first()
 
 def get_llm():
     llm = ChatGroq(
