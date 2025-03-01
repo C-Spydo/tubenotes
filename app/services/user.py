@@ -12,9 +12,10 @@ def sign_in(username: str):
 
     serialized_user = user.serialize()
 
-    chat_memory = serialized_user['chat_memory']
+    chat_memories = serialized_user['chats']
 
-    if chat_memory is not None:
-        serialized_user['chat_memory'] = chat_memory.load_memory_variables({})["history"]
+    for chat_memory in chat_memories:
+        if chat_memory is not None:
+            chat_memory = chat_memory.load_memory_variables({})["history"]
 
     return serialized_user
