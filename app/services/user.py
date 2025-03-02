@@ -14,8 +14,8 @@ def sign_in(username: str):
 
     chat_memories = serialized_user['chats']
 
-    for chat_memory in chat_memories:
+    for i, chat_memory in enumerate(chat_memories):
         if chat_memory is not None:
-            chat_memory = chat_memory.load_memory_variables({})["history"]
+            chat_memories[i]['memory'] = chat_memory['memory'].load_memory_variables({})["history"]
 
     return serialized_user

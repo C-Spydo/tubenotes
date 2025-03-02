@@ -2,6 +2,8 @@ import jsonpickle
 from langchain.memory import ConversationBufferMemory
 from langchain_groq import ChatGroq
 from app.dtos.chat_setting import ChatSetting
+from app.dtos.prompt import Prompt
+from app.repository.chat import get_chat_by_id
 from app.repository.user import get_user_by_username
 from ..extensions.database import session
 from langchain.chains.conversation.base import ConversationChain
@@ -9,20 +11,15 @@ from app.helpers import add_record_to_database, create_response
 from app.models import User, Chat
 from langchain_core.messages import SystemMessage
 from langchain.prompts import PromptTemplate
-from ..dtos.message_request import MessageRequest
 from flask import abort
-
-# def start_chat(request: ChatSetting):
-
 
 def start_chat(request: ChatSetting):
     user = validate_user(request['username'])
 
     chat_memory = create_chat_memory()
-    chat_memory.chat_memory.add_message(SystemMessage(content=f"You are a {request['character_description']} named {request['character_name']}, engage this user in a conversation"))
+    chat_memory.chat_memory.add_message(SystemMessage(content=f"You are a {request['character_description']} named {request['character_name']}, play the role and engage this user in a conversation"))
     
     langchain_conversation = create_conversation_chain(get_llm(), chat_memory)
-
     ai_response = langchain_conversation.predict(input=request['prompt'])
 
     chat = Chat(user_id=user.id, character_name=request['character_name'], memory=jsonpickle.encode(chat_memory))
@@ -30,6 +27,16 @@ def start_chat(request: ChatSetting):
 
     return {"chat_id": chat.id, "chat_history": chat_memory.load_memory_variables({})["history"] ,"ai_response": ai_response}
 
+def prompt_bot(request: Prompt):
+    chat = get_chat_by_id(request['chat_id'])
+    chat_memory = chat.deserialize_chat_memory()
+
+    langchain_conversation = create_conversation_chain(get_llm(), chat_memory)
+    ai_response = langchain_conversation.predict(input=request['prompt'])
+
+    chat.update_chat_memory(chat_memory)
+
+    return {"chat_id": chat.id, "chat_history": chat_memory.load_memory_variables({})["history"] ,"ai_response": ai_response}
 
 def get_llm():
     llm = ChatGroq(

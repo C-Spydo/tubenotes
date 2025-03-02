@@ -13,7 +13,7 @@ def start_chat():
     response = chat.start_chat(request.get_json())
     return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE, response), 200
 
-@routes_blueprint.route('/chat', methods=['POST'])
+@routes_blueprint.route('/prompt', methods=['POST'])
 def prompt_bot():
     response = chat.prompt_bot(request.get_json())
     return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE, response), 200

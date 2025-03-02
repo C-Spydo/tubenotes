@@ -19,7 +19,7 @@ class Chat(database.Model):
         return f'<Chat {self.id}>'
 
     
-    def  serialize(self):
+    def serialize(self):
             return {
                 'id': self.id,
                 "character_name": self.character_name,
