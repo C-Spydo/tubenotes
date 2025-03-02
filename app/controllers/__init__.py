@@ -5,3 +5,4 @@ routes_blueprint = Blueprint(
 )
 
 from . import chat
+from . import user
