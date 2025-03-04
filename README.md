@@ -2,7 +2,7 @@
 AI Chatbot demonstrating the use of Retrieval-Augmented Generation (RAG)
 
 ## How to start
-run `(https://github.com/C-Spydo/stockyai.git)` in the directory to be used
+run `[https://github.com/C-Spydo/stockyai.git]` in the directory to be used
 
 ## Install dependencies
 Install dependencies using `pip install -r requirements.txt`, preferably in a virtual enviroment
