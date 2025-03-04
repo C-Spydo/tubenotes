@@ -1,5 +1,8 @@
 from .extensions.database import database, session
 from flask import abort, jsonify
+import jwt
+import datetime
+from .constants import APP_SECRET_KEY
 
 
 
@@ -23,6 +26,12 @@ def add_records_to_database(records):
     except Exception as e:
         session.rollback()
 
+def get_record_by_field(model, field, value):
+    try:
+        return session.query(model).filter(getattr(model, field) == value).first()
+    except Exception as e:
+        print(f"Error fetching record: {e}")
+        return None
     
 def create_response(status: bool, message: str, data=None):
     response = {
@@ -32,3 +41,50 @@ def create_response(status: bool, message: str, data=None):
     if data is not None:
         response["data"] = data
     return jsonify(response)
+
+
+def generate_jwt_token(user):
+    payload = {
+        "user_id": user.id,
+        "name": user.username,
+        "email": user.email,
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7),
+        "iat": datetime.datetime.utcnow(),
+    }
+
+    token = jwt.encode(payload, APP_SECRET_KEY, algorithm="HS256")
+    return token
+
+
+
+from functools import wraps
+from flask import request, jsonify
+import jwt
+
+
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.headers.get("Authorization")
+        if not token:
+            return jsonify({"message": "Token is missing!"}), 401
+
+        try:
+            token = token.split(" ")[1]  # Remove "Bearer" prefix
+            data = jwt.decode(token, APP_SECRET_KEY, algorithms=["HS256"])
+            user_id = data["user_id"]
+
+            # Check token in DB
+            session = UserSession.query.filter_by(user_id=user_id, token=token).first()
+            if not session or session.expires_at < datetime.utcnow():
+                return jsonify({"message": "Invalid or expired token!"}), 401
+
+        except jwt.ExpiredSignatureError:
+            return jsonify({"message": "Token has expired!"}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({"message": "Invalid token!"}), 401
+
+        return f(user_id, *args, **kwargs)
+
+    return decorated
