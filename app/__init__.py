@@ -20,6 +20,8 @@ def create_app(config_class=Config):
     register_blueprints(app)
 
     initialize_extensions(app)
+    if app.config.get("DEBUG"):  # Only enable auto-reload in development
+        app.run(debug=True)
 
     return app
 
