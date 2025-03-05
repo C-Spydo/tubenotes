@@ -27,7 +27,7 @@ def start_chat(request: ChatSetting):
     langchain_conversation = create_conversation_chain(get_llm(), chat_memory, stock)
     ai_response = langchain_conversation.predict(input=request['prompt'])
 
-    chat = Chat(user_id=user.id, character_name=request['character_name'], memory=jsonpickle.encode(chat_memory))
+    chat = Chat(user_id=user.id, character_name=request['character_name'], stock=request['stock'], memory=jsonpickle.encode(chat_memory))
     add_record_to_database(chat)
 
     return {"chat_id": chat.id, "chat_history": chat_memory.load_memory_variables({})["history"] ,"ai_response": ai_response}
