@@ -7,6 +7,10 @@ from .extensions import *
 from .constants import *
 from flask import Flask 
 
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.interval import IntervalTrigger
+
+
 load_dotenv()
 
 def create_app(config_class=Config):
@@ -20,7 +24,10 @@ def create_app(config_class=Config):
     register_blueprints(app)
 
     initialize_extensions(app)
-    if app.config.get("DEBUG"):  # Only enable auto-reload in development
+
+    run_scheduler(app)
+
+    if app.config.get("DEBUG"):  
         app.run(debug=True)
 
     return app
@@ -34,4 +41,11 @@ def initialize_extensions(app):
 
 def register_blueprints(app):
     app.register_blueprint(routes_blueprint)
+
+def run_scheduler(app):
+    from .jobs.stock_scraper import scrape_stocks
+        
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(scrape_stocks, IntervalTrigger(hours=6), args=[app])
+    scheduler.start()
 

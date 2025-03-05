@@ -17,27 +17,6 @@ URLS = {
     "yahoo_topic": "https://finance.yahoo.com/topic/stock-market-news/"
 }
 
-def scrape_stocks(stock_symbols):
-    for symbol in stock_symbols:
-        print(f"Fetching data for {symbol}...")
-        news = fetch_stock_news(symbol)
-        price = fetch_stock_price(symbol)
-
-        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-        stock_data = f"""
-        Stock News of {symbol} on the {timestamp}\n\n
-
-        The stock price is ${price}.\n
-        """
-
-        news_content = [data['content'] for data in news]
-
-        stock_data += "\n".join(f"\n{content}" for content in news_content)
-
-        scraped_data = StockData(news=stock_data, stock_metadata=jsonpickle.encode({'stock_symbol': symbol}))
-        add_record_to_database(scraped_data)
-
 def fetch_stock_news(stock_symbol):
     news_url = URLS['yahoo_finance'].format(stock_symbol=stock_symbol)
     response = requests.get(news_url, headers=HEADERS)

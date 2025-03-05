@@ -1,6 +1,6 @@
 from . import routes_blueprint
 from ..services import chat
-from ..services import stock_scraper
+from ..jobs import stock_scraper
 from flask import request
 from flask_parameter_validation import ValidateParameters, Query
 from typing import Optional
@@ -23,8 +23,8 @@ def prompt_bot():
 def ping():
     return create_response(CustomStatusCode.SUCCESS.value, "API is Awake"), 200
 
-@routes_blueprint.route('/scrape', methods=['GET'])
-def scrape():
-    stock_scraper.scrape_stocks(["TSLA"])
-    return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE), 200
+# @routes_blueprint.route('/scrape', methods=['GET'])
+# def scrape():
+#     stock_scraper.scrape_stocks(["TSLA"])
+#     return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE), 200
 
