@@ -1,7 +1,7 @@
 from . import routes_blueprint
 from ..services import chat
 from flask import request
-# from flask_parameter_validation import ValidateParameters, Query
+from flask_parameter_validation import ValidateParameters, Query
 from typing import Optional
 from ..error_handler import url_validation_error_handler
 from ..helpers import create_response
