@@ -5,3 +5,4 @@ class ChatSetting(BaseModel):
     character_name: str
     character_description: str
     prompt: str
+    stock: str
