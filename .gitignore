@@ -1,3 +1,4 @@
 .env
 __pycache__/
 zeta-venv
+.idea
