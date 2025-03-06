@@ -2,6 +2,8 @@ from app.extensions import database as db, session
 from sqlalchemy.sql import func
 import jsonpickle
 
+from app.helpers import deserialize_json_data
+
 class StockData(db.Model):
     __tablename__ = 'stock_data'
 
@@ -12,3 +14,10 @@ class StockData(db.Model):
 
     def __repr__(self):
         return f'<StockData {self.id}>'
+    
+    def serialize(self):
+            return {
+                'id': self.id,
+                "news": self.news,
+                "stock_metadata": deserialize_json_data(self.stock_metadata)
+            }

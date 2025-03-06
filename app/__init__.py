@@ -43,8 +43,10 @@ def register_blueprints(app):
 
 def run_scheduler(app):
     from .jobs.stock_scraper import scrape_stocks
+    from .jobs.stock_data_cleaner import clean_stock_table
         
     scheduler = BackgroundScheduler()
     scheduler.add_job(scrape_stocks, IntervalTrigger(hours=6), args=[app])
+    scheduler.add_job(clean_stock_table, IntervalTrigger(days=1), args=[app])
     scheduler.start()
 

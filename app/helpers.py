@@ -5,6 +5,7 @@ from functools import wraps
 import jwt
 import datetime
 from .constants import APP_SECRET_KEY
+import jsonpickle
 
 def is_valid_number(value):
     # Check if the value is a number
@@ -25,6 +26,15 @@ def add_records_to_database(records):
         session.commit()
     except Exception as e:
         session.rollback()
+
+def deserialize_json_data(data):
+        if not data:
+            return None 
+        try:
+            return jsonpickle.decode(data)
+        except Exception as e:
+            print(f"Error decoding chat memory: {e}")
+            return None
 
 def get_record_by_field(model, field, value):
     try:
