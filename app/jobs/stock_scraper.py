@@ -1,5 +1,5 @@
 from ..models import StockData
-from ..helpers import add_record_to_database
+from ..helpers import add_records_to_database
 from ..services.stock_scraper import fetch_stock_news, fetch_stock_price
 import datetime
 import jsonpickle
@@ -15,8 +15,9 @@ URLS = {
 
 def scrape_stocks(app):
     with app.app_context():
-        stock_symbols = ['TSLA']
-        
+        stock_symbols = ['TSLA', 'GOOG']
+        stock_data_objects = []
+
         for symbol in stock_symbols:
             print(f"Fetching data for {symbol}...")
             news = fetch_stock_news(symbol)
@@ -34,6 +35,7 @@ def scrape_stocks(app):
 
             stock_data += "\n".join(f"\n{content}" for content in news_content)
 
-            scraped_data = StockData(news=stock_data, stock_metadata=jsonpickle.encode({'stock_symbol': symbol, 'timestamp': timestamp}))
-            add_record_to_database(scraped_data)
-
+            scraped_data = StockData(name=symbol+timestamp, news=stock_data, stock_metadata=jsonpickle.encode({'stock_symbol': symbol, 'timestamp': timestamp}))
+            stock_data_objects.append(scraped_data)
+        
+        add_records_to_database(stock_data_objects)
