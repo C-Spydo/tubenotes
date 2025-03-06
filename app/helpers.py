@@ -1,10 +1,10 @@
 from .extensions.database import database, session
-from flask import abort, jsonify
+from .models import UserSession
+from flask import abort, jsonify, request
+from functools import wraps
 import jwt
 import datetime
 from .constants import APP_SECRET_KEY
-
-
 
 def is_valid_number(value):
     # Check if the value is a number
@@ -54,14 +54,6 @@ def generate_jwt_token(user):
 
     token = jwt.encode(payload, APP_SECRET_KEY, algorithm="HS256")
     return token
-
-
-
-from functools import wraps
-from flask import request, jsonify
-import jwt
-
-
 
 def token_required(f):
     @wraps(f)

@@ -21,10 +21,9 @@ def create_app(config_class=Config):
 
     CORS(app)
 
+    register_error_handlers(app) 
     register_blueprints(app)
-
     initialize_extensions(app)
-
     run_scheduler(app)
 
     if app.config.get("DEBUG"):  
