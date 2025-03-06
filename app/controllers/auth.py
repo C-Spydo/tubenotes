@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, abort 
 from app.constants import SUCCESS_MESSAGE, GOOGLE_CLIENT_ID
 from app.enums.custom_status_code import CustomStatusCode
 from app.error_handler import url_validation_error_handler
@@ -34,7 +34,7 @@ def google_login(name: str = Json(), email: str = Json(), google_id: str = Json(
         user = get_record_by_field(User, "google_id", google_id)
 
         if not user:
-            print("Not user")
+            abort(404, "User not found")
             user = User(username=name, email=email, google_id=google_id)
             add_record_to_database(user)
 
