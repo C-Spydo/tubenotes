@@ -8,7 +8,7 @@ class Chat(database.Model):
 
     id = database.Column(database.Integer, primary_key=True)
     user_id = database.Column(database.Integer, database.ForeignKey('users.id'), nullable=False)
-    character_name = database.Column(database.String(255), nullable=False)
+    stock = database.Column(database.String(255), nullable=False)
     title = database.Column(database.String(255), nullable=True)
     memory = database.Column(database.Text, nullable=False)
     created_at = database.Column(database.DateTime(timezone=True), server_default=func.now())
@@ -22,7 +22,7 @@ class Chat(database.Model):
     def serialize(self):
             return {
                 'id': self.id,
-                "character_name": self.character_name,
+                "stock": self.stock,
                 "title": self.title,
                 "memory": self.deserialize_chat_memory()
             }
