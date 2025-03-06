@@ -6,8 +6,6 @@ from app.helpers import create_response, get_record_by_field, add_record_to_data
 from app.services import user
 from app.models import User, UserSession
 from flask_parameter_validation import ValidateParameters, Json
-
-from app.validators import google_auth_validator
 from . import routes_blueprint
 from ..extensions.database import session
 
