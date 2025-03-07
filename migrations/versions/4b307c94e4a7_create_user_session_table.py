@@ -31,7 +31,7 @@ def upgrade():
     with op.batch_alter_table('users', schema=None) as batch_op:
         batch_op.add_column(sa.Column('email', sa.String(length=255), nullable=False))
         batch_op.add_column(sa.Column('google_id', sa.String(length=255), nullable=False))
-        batch_op.drop_index('username')
+        # batch_op.drop_index('username')
 
     # ### end Alembic commands ###
 
