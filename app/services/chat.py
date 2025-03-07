@@ -38,7 +38,7 @@ def prompt_bot(request: Prompt):
 
     langchain_conversation = create_conversation_chain(get_llm(), chat_memory, get_prompt_template(chat.stock))
 
-    ai_response = langchain_conversation.invoke({"question": request['prompt'], "chat_history": chat_memory})
+    ai_response = langchain_conversation.invoke({"question": request['prompt']})
 
     chat.update_chat_memory(chat_memory)
 
