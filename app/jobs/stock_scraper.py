@@ -1,6 +1,7 @@
 from ..models import StockData
 from ..helpers import add_records_to_database
 from ..services.stock_scraper import fetch_stock_news, fetch_stock_price
+from ..services.pinecone_vectorizer import get_pinecone_index, upsert_documents
 import datetime
 import jsonpickle
 
@@ -15,7 +16,7 @@ URLS = {
 
 def scrape_stocks(app):
     with app.app_context():
-        stock_symbols = ['TSLA', 'GOOG']
+        stock_symbols = ['TSLA']
         stock_data_objects = []
 
         for symbol in stock_symbols:
@@ -37,5 +38,6 @@ def scrape_stocks(app):
 
             scraped_data = StockData(name=symbol+timestamp, news=stock_data, stock_metadata=jsonpickle.encode({'stock_symbol': symbol, 'timestamp': timestamp}))
             stock_data_objects.append(scraped_data)
-        
+
+        upsert_documents([(data.name, data.news, data.deserialize_stock_metadata()) for data in stock_data_objects])
         add_records_to_database(stock_data_objects)

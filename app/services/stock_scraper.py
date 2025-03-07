@@ -1,12 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
-from ..models import StockData
-from ..helpers import add_record_to_database
-import json
-import datetime
-import time
-import os
-import jsonpickle
+
+
 
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
 

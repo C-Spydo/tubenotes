@@ -32,7 +32,6 @@ def google_login(name: str = Json(), email: str = Json(), google_id: str = Json(
         user = get_record_by_field(User, "google_id", google_id)
 
         if not user:
-            abort(404, "User not found")
             user = User(username=name, email=email, google_id=google_id)
             add_record_to_database(user)
 
@@ -40,9 +39,17 @@ def google_login(name: str = Json(), email: str = Json(), google_id: str = Json(
         session = UserSession(user_id=user.id, token=token)
         add_record_to_database(session)
 
+        serialized_user = user.serialize()
+
+        chat_memories = serialized_user['chats']
+
+        for i, chat_memory in enumerate(chat_memories):
+            if chat_memory is not None:
+                chat_memories[i]['memory'] = chat_memory['memory'].load_memory_variables({})["chat_history"]
+
 
         return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE, {"id": user.id, "token":token,
-                                                                                 "email": email, "name": name}), 200
+                                                                                 "email": email, "name": name, "chats": serialized_user['chats']}), 200
 
     except ValueError:
         return create_response(CustomStatusCode.BAD_REQUEST.value, "Invalid Token"), 400
