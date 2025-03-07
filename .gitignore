@@ -1,4 +1,5 @@
 .env
 __pycache__/
 zeta-venv
-stock_data.json
+.idea
+stockyAI
