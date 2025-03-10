@@ -10,12 +10,6 @@ from . import routes_blueprint
 from ..extensions.database import session
 
 
-@routes_blueprint.route('/sign-in', methods=['POST'])
-def sign_in():
-    response = user.sign_in(request.get_json()["username"])
-    return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE, response), 200
-
-
 @routes_blueprint.route("/api/auth/google", methods=["POST"])
 @ValidateParameters(url_validation_error_handler)
 def google_login(name: str = Json(), email: str = Json(), google_id: str = Json()):
@@ -65,3 +59,7 @@ def logout(user_id):
 # @token_required
 # def protected_route(user_id):
 #     return jsonify({"message": f"Hello, User {user_id}!"})
+
+@routes_blueprint.route('/ping', methods=['GET'])
+def ping():
+    return create_response(CustomStatusCode.SUCCESS.value, "API is Awake"), 200

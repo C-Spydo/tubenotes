@@ -6,3 +6,4 @@ routes_blueprint = Blueprint(
 
 from . import chat
 from . import auth
+from . import industry

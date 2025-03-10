@@ -20,12 +20,4 @@ def prompt_bot(chat_id:int = Json(), prompt:str = Json()):
     response = chat.prompt_bot(request.get_json())
     return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE, response), 200
 
-@routes_blueprint.route('/ping', methods=['GET'])
-def ping():
-    return create_response(CustomStatusCode.SUCCESS.value, "API is Awake"), 200
-
-# @routes_blueprint.route('/scrape', methods=['GET'])
-# def scrape():
-#     stock_scraper.scrape_stocks(["TSLA"])
-#     return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE), 200
 
