@@ -24,7 +24,6 @@ def create_app(config_class=Config):
     register_error_handlers(app) 
     register_blueprints(app)
     initialize_extensions(app)
-    run_scheduler(app)
 
     if app.config.get("DEBUG"):  
         app.run(debug=True)
@@ -40,13 +39,4 @@ def initialize_extensions(app):
 
 def register_blueprints(app):
     app.register_blueprint(routes_blueprint)
-
-def run_scheduler(app):
-    from .jobs.stock_scraper import scrape_stocks
-    from .jobs.stock_data_cleaner import clean_stock_table
-        
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(scrape_stocks, IntervalTrigger(hours=6), args=[app])
-    # scheduler.add_job(clean_stock_table, IntervalTrigger(days=1), args=[app])
-    scheduler.start()
 
