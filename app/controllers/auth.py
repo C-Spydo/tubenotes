@@ -55,11 +55,17 @@ def logout(user_id):
     session.commit()
     return create_response(CustomStatusCode.SUCCESS.value, "Logged out successfully!"), 200
 
-# @app.route('/protected', methods=['GET'])
-# @token_required
-# def protected_route(user_id):
-#     return jsonify({"message": f"Hello, User {user_id}!"})
-
 @routes_blueprint.route('/ping', methods=['GET'])
 def ping():
     return create_response(CustomStatusCode.SUCCESS.value, "API is Awake"), 200
+
+@routes_blueprint.route('/dashboard', methods=['GET'])
+def dashboard():
+    data = {
+        "total_emails": 1234,
+        "total_prospects": 567,
+        "total_cold_calls": 89,
+        "api_status": "Alive"
+    }
+    return create_response(CustomStatusCode.SUCCESS.value, "Dashboard Data Retrieved", data), 200
+

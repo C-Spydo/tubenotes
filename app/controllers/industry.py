@@ -10,7 +10,6 @@ def list_industries():
     return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE, industries), 200
 
 
-
 industries = [
     {"id": 1, "name": "Engineering"},
     {"id": 2, "name": "Fashion"},
