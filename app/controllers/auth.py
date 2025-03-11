@@ -7,7 +7,7 @@ from app.models import User, UserSession
 from flask_parameter_validation import ValidateParameters, Json
 from . import routes_blueprint
 from ..extensions.database import session
-from ..services.mail import send_mail
+from ..services.smtp_mail import send_mail
 
 
 @routes_blueprint.route("/api/auth/google", methods=["POST"])

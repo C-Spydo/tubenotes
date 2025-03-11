@@ -1,6 +1,6 @@
 from ..models import Prospect
 from ..helpers import add_record_to_database
-from ..repository.base import get_list
+from ..repository.base import get_list, get_record_by_field
 
 def add_prospect(request: dict):
     prospect = Prospect(
@@ -20,3 +20,7 @@ def get_prospects():
     serialized_prospects = [prospect.serialize() for prospect in prospects]
 
     return {'prospects': serialized_prospects}
+
+def get_prospect_by_id(id):
+    return get_record_by_field(Prospect, 'id', id).serialize()
+    

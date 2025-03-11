@@ -17,4 +17,14 @@ SUCCESS_MESSAGE = 'Success'
 INTERNAL_SERVER_ERROR_MESSAGE = 'Something went wrong'
 
 
+DUMMY_EMAIL ="""Dear [Recipient's Name],
+
+I hope you're doing well. I'm [Your Name] from [Your Insurance Company], and I wanted to reach out to see how we can help you secure your future with tailored insurance solutions.
+
+Whether you're looking for [life, health, auto, home, or business insurance], we offer competitive plans designed to provide the best coverage at the right price. Our team takes pride in delivering personalized service, ensuring that you get a policy that truly meets your needs.
+
+I'd love to schedule a quick call to discuss how we can help you. Are you available this week for a short chat?
+"""
+
+
 
