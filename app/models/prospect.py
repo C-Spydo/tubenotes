@@ -19,6 +19,15 @@ class Prospect(database.Model):
 
     def __repr__(self):
         return f'<Prospect {self.id}>'
+    
+    def  serialize(self):
+        return {
+            "industry_id": self.industry_id,
+            "company_name": self.company_name,
+            "contact_name": self.contact_name,
+            "contact_email": self.contact_email,
+            "contact_phone": self.contact_phone
+        }
 
     
   
