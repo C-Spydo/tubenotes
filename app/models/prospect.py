@@ -22,6 +22,7 @@ class Prospect(database.Model):
     
     def  serialize(self):
         return {
+            "id": self.id,
             "industry_id": self.industry_id,
             "company_name": self.company_name,
             "contact_name": self.contact_name,

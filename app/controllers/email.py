@@ -1,31 +1,35 @@
+from app.models.email import Email
+from app.repository.base import get_record_by_field
 from . import routes_blueprint
-from .industry import industries
 from ..error_handler import url_validation_error_handler
-from flask_parameter_validation import ValidateParameters, Json
+from flask_parameter_validation import ValidateParameters, Json, Route
 from ..helpers import create_response
-from ..constants import SUCCESS_MESSAGE
+from ..constants import SUCCESS_MESSAGE,DUMMY_EMAIL
 from ..enums import CustomStatusCode
 
-@routes_blueprint.route('/email', methods=['GET'])
+
+@routes_blueprint.route('/emails/generate', methods=['GET'])
 def generate_email():
-    email = """Dear [Recipient's Name],
-
-    I hope you're doing well. I'm [Your Name] from [Your Insurance Company], and I wanted to reach out to see how we can help you secure your future with tailored insurance solutions.
-
-    Whether you're looking for [life, health, auto, home, or business insurance], we offer competitive plans designed to provide the best coverage at the right price. Our team takes pride in delivering personalized service, ensuring that you get a policy that truly meets your needs.
-
-    I'd love to schedule a quick call to discuss how we can help you. Are you available this week for a short chat?
-    """
+    email = DUMMY_EMAIL
     return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE, email), 200
 
 @routes_blueprint.route('/emails', methods=['GET'])
 def get_cold_emails():
-    email = """Dear [Recipient's Name],
+    emails = [{
+        "id": 1,
+        "contact_email": "langchain@mail.com",   
+        "message": DUMMY_EMAIL,
+    },
+    {
+        "id": 2,
+        "contact_email": "dinamitrov@mail.com",   
+        "message": DUMMY_EMAIL,
+    }]
 
-    I hope you're doing well. I'm [Your Name] from [Your Insurance Company], and I wanted to reach out to see how we can help you secure your future with tailored insurance solutions.
+    return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE, {"emails": emails}), 200
 
-    Whether you're looking for [life, health, auto, home, or business insurance], we offer competitive plans designed to provide the best coverage at the right price. Our team takes pride in delivering personalized service, ensuring that you get a policy that truly meets your needs.
-
-    I'd love to schedule a quick call to discuss how we can help you. Are you available this week for a short chat?
-    """
+@routes_blueprint.route('/emails/<int:id>', methods=['GET'])
+@ValidateParameters(url_validation_error_handler)
+def get_email(id:int = Route()):
+    email = get_record_by_field(Email, 'id', id).serialize()
     return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE, email), 200
