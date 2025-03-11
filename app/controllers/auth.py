@@ -3,7 +3,6 @@ from app.constants import SUCCESS_MESSAGE, GOOGLE_CLIENT_ID
 from app.enums.custom_status_code import CustomStatusCode
 from app.error_handler import url_validation_error_handler
 from app.helpers import create_response, get_record_by_field, add_record_to_database, generate_jwt_token, token_required
-from app.services import user
 from app.models import User, UserSession
 from flask_parameter_validation import ValidateParameters, Json
 from . import routes_blueprint

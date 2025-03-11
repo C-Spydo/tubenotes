@@ -7,9 +7,6 @@ from .extensions import *
 from .constants import *
 from flask import Flask 
 
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.interval import IntervalTrigger
-
 
 load_dotenv()
 

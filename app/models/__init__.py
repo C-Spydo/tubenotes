@@ -1,6 +1,6 @@
 from .user import User
-from .chat import Chat
 from .user_session import UserSession
-from .stock_data import StockData
+from .prospect import Prospect
+from .email import Email
 
-__all__ = ['User', 'Chat', 'UserSession', 'StockData']
+__all__ = ['User', 'Email', 'UserSession', 'Prospect']
