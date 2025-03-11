@@ -1,8 +1,8 @@
-# StockyAI API
-AI Chatbot demonstrating the use of Retrieval-Augmented Generation (RAG)
+# Icebreaker API
+AI powered platform for sending personalized cold emails and cold calls using chains
 
 ## How to start
-run `git clone https://github.com/C-Spydo/stockyai.git` in the directory to be used
+run `git clone https://github.com/C-Spydo/icebreaker.git` in the directory to be used
 
 ## Install dependencies
 Install dependencies using `pip install -r requirements.txt`, preferably in a virtual enviroment
