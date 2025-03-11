@@ -7,7 +7,7 @@ class User(database.Model):
 
     id = database.Column(database.Integer, primary_key=True, autoincrement=True)
     fullname = database.Column(database.String(255), nullable=False)
-    email = database.Column(database.String(255), nullable=False)
+    email = database.Column(database.String(255), nullable=False, unique=True)
     google_id = database.Column(database.String(255), nullable=False)
     created_at = database.Column(database.DateTime(timezone=True), server_default=func.now())
     updated_at = database.Column(database.DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
