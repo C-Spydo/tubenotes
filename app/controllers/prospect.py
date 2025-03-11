@@ -32,6 +32,6 @@ def list_prospects():
 @routes_blueprint.route('/prospects', methods=['POST'])
 @ValidateParameters(url_validation_error_handler)
 def create_prospect(industry_id:int = Json(), company_name:str = Json(), contact_name:str = Json(), contact_email:str = Json(), contact_phone:str = Json()):
-    prospect = add_prospect(request.json())
+    prospect = add_prospect(request.get_json())
     return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE, prospect), 201
 
