@@ -17,6 +17,6 @@ class User(database.Model):
     
     def  serialize(self):
         return {
-            'username': self.username,
-            "chats": [chat.serialize() for chat in self.chats]
+            'fullname': self.fullname,
+            'email': self.email
         }
