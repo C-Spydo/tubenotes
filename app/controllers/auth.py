@@ -7,20 +7,12 @@ from app.models import User, UserSession
 from flask_parameter_validation import ValidateParameters, Json
 from . import routes_blueprint
 from ..extensions.database import session
+from ..services.mail import send_mail
 
 
 @routes_blueprint.route("/api/auth/google", methods=["POST"])
 @ValidateParameters(url_validation_error_handler)
 def google_login(name: str = Json(), email: str = Json(), google_id: str = Json()):
-    # data = request.get_json()
-
-    # name = data.get("name")
-    # email = data.get("email")
-    # google_id = data.get("google_id")
-
-    # if not all([name, email, google_id]):
-    #     return create_response(CustomStatusCode.BAD_REQUEST.value, "Missing required fields"), 400
-
     try:
         user = get_record_by_field(User, "google_id", google_id)
 
