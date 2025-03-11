@@ -7,3 +7,4 @@ routes_blueprint = Blueprint(
 from . import auth
 from . import industry
 from . import prospect
+from . import email

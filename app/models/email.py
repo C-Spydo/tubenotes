@@ -19,6 +19,7 @@ class Email(database.Model):
     def serialize(self):
         return {
             "id": self.id,
+            "propect": self.prospect["company_name"],   
             "message": self.message,
             "created_at": self.created_at
         }
