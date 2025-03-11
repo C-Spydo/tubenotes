@@ -26,7 +26,8 @@ class Prospect(database.Model):
             "company_name": self.company_name,
             "contact_name": self.contact_name,
             "contact_email": self.contact_email,
-            "contact_phone": self.contact_phone
+            "contact_phone": self.contact_phone,
+            "emails": [email.serialize() for email in self.emails ]
         }
 
     

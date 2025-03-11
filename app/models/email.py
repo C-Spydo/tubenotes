@@ -15,3 +15,10 @@ class Email(database.Model):
 
     def __repr__(self):
         return f'<Email {self.id}>'
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "message": self.message,
+            "created_at": self.created_at
+        }
