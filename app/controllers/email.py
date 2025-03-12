@@ -5,7 +5,7 @@ from ..error_handler import url_validation_error_handler
 from flask_parameter_validation import ValidateParameters, Json, Route
 from ..helpers import create_response
 from ..constants import SUCCESS_MESSAGE,DUMMY_EMAIL
-from ..enums import CustomStatusCode
+from ..enums import CustomStatusCode, EmailStatus
 from datetime import datetime
 
 @routes_blueprint.route('/emails/generate', methods=['GET'])
@@ -17,6 +17,7 @@ def generate_email():
 def get_cold_emails():
     emails = [{
         "id": 1,
+        "status": EmailStatus.SENT.value,
         "contact_name": "Lang Chain",
         "contact_email": "langchain@mail.com",   
         "message": DUMMY_EMAIL,
@@ -24,6 +25,7 @@ def get_cold_emails():
     },
     {
         "id": 2,
+        "status": EmailStatus.SENT.value,
         "contact_name": "Dina Mitrov",
         "contact_email": "dinamitrov@mail.com",  
         "message": DUMMY_EMAIL,
