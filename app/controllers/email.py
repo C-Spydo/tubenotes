@@ -23,7 +23,8 @@ def get_cold_emails():
         "contact_name": "Lang Chain",
         "contact_email": "langchain@mail.com",   
         "message": DUMMY_EMAIL,
-        "created_at":  datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+        "created_at":  datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
+        "updated_at":  datetime.today().strftime("%Y-%m-%d %H:%M:%S")
     },
     {
         "id": 2,
@@ -31,7 +32,8 @@ def get_cold_emails():
         "contact_name": "Dina Mitrov",
         "contact_email": "dinamitrov@mail.com",  
         "message": DUMMY_EMAIL,
-        "created_at":  datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+        "created_at":  datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
+        "updated_at":  datetime.today().strftime("%Y-%m-%d %H:%M:%S")
     }]
 
     return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE, {"emails": emails}), 200
