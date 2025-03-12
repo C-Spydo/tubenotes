@@ -1,5 +1,4 @@
-from flask import request, abort 
-from app.constants import SUCCESS_MESSAGE, GOOGLE_CLIENT_ID
+from app.constants import SUCCESS_MESSAGE
 from app.enums.custom_status_code import CustomStatusCode
 from app.error_handler import url_validation_error_handler
 from app.helpers import create_response, get_record_by_field, add_record_to_database, generate_jwt_token, token_required
@@ -7,7 +6,6 @@ from app.models import User, UserSession
 from flask_parameter_validation import ValidateParameters, Json
 from . import routes_blueprint
 from ..extensions.database import session
-from ..services.smtp_mail import send_mail
 
 
 @routes_blueprint.route("/api/auth/google", methods=["POST"])
