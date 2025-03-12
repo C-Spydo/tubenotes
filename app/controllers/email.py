@@ -6,7 +6,7 @@ from flask_parameter_validation import ValidateParameters, Json, Route
 from ..helpers import create_response
 from ..constants import SUCCESS_MESSAGE,DUMMY_EMAIL
 from ..enums import CustomStatusCode
-
+from datetime import datetime
 
 @routes_blueprint.route('/emails/generate', methods=['GET'])
 def generate_email():
@@ -17,13 +17,17 @@ def generate_email():
 def get_cold_emails():
     emails = [{
         "id": 1,
+        "contact_name": "Lang Chain",
         "contact_email": "langchain@mail.com",   
         "message": DUMMY_EMAIL,
+        "created_at":  datetime.today().strftime("%Y-%m-%d %H:%M:%S")
     },
     {
         "id": 2,
-        "contact_email": "dinamitrov@mail.com",   
+        "contact_name": "Dina Mitrov",
+        "contact_email": "dinamitrov@mail.com",  
         "message": DUMMY_EMAIL,
+        "created_at":  datetime.today().strftime("%Y-%m-%d %H:%M:%S")
     }]
 
     return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE, {"emails": emails}), 200

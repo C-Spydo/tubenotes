@@ -2,6 +2,7 @@ from flask import render_template
 from flask_mail import Message
 from ..extensions import mail
 from ..constants import *
+from flask import abort
 
 def send_mail(recipients: list[str]):
     message = curate_cold_mail(recipients)
@@ -10,6 +11,7 @@ def send_mail(recipients: list[str]):
         mail.send(message)
     except Exception as e:
         print(EMAIL_ERROR_MESSAGE.replace("XX", str(e)))
+        abort(500, 'Something is broken, pls try again later')
 
     
 
