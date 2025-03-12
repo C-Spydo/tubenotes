@@ -1,17 +1,19 @@
 from app.models.email import Email
 from app.repository.base import get_record_by_field
+from app.services.cold_mail import generate_cold_mail
 from . import routes_blueprint
 from ..error_handler import url_validation_error_handler
-from flask_parameter_validation import ValidateParameters, Json, Route
+from flask_parameter_validation import ValidateParameters, Route
 from ..helpers import create_response
 from ..constants import SUCCESS_MESSAGE,DUMMY_EMAIL
 from ..enums import CustomStatusCode, EmailStatus
 from datetime import datetime
 
-@routes_blueprint.route('/emails/generate', methods=['GET'])
-def generate_email():
-    email = DUMMY_EMAIL
-    return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE, email), 200
+@routes_blueprint.route('/emails/generate/<int:prospect_id>', methods=['GET'])
+@ValidateParameters(url_validation_error_handler)
+def generate_email(prospect_id: int = Route()):
+    data = generate_cold_mail(prospect_id)
+    return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE, data), 200
 
 @routes_blueprint.route('/emails', methods=['GET'])
 def get_cold_emails():
