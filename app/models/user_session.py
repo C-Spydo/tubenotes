@@ -17,4 +17,4 @@ class UserSession(database.Model):
     def __init__(self, user_id, token, expires_in=3600):
         self.user_id = user_id
         self.token = token
-        self.expires_at = datetime.utcnow() + timedelta(seconds=expires_in)
+        self.expires_at = datetime.now() + timedelta(seconds=expires_in)

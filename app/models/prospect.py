@@ -2,6 +2,7 @@ from app.extensions import database, session
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
+from app.services.industry import get_industry_name
 
 class Prospect(database.Model):
     __tablename__ = 'prospects'
@@ -23,12 +24,12 @@ class Prospect(database.Model):
     def  serialize(self):
         return {
             "id": self.id,
-            "industry_id": self.industry_id,
+            "industry": get_industry_name(self.industry_id),
             "company_name": self.company_name,
             "contact_name": self.contact_name,
             "contact_email": self.contact_email,
             "contact_phone": self.contact_phone,
-            "emails": [email.serialize() for email in self.emails ]
+            "emails": [email.serialize() for email in self.emails]
         }
 
     

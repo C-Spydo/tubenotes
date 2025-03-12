@@ -1,6 +1,5 @@
 from app.models.prospect import Prospect
 from . import routes_blueprint
-from .industry import industries
 from ..error_handler import url_validation_error_handler
 from flask_parameter_validation import ValidateParameters, Json, Route
 from ..helpers import create_response
