@@ -2,7 +2,7 @@ from app.constants import SUCCESS_MESSAGE
 from app.enums.custom_status_code import CustomStatusCode
 from app.error_handler import url_validation_error_handler
 from app.helpers import create_response, get_record_by_field, add_record_to_database, generate_jwt_token, token_required
-from app.models import User, UserSession
+from app.models import User, UserSession, Prospect, Email
 from flask_parameter_validation import ValidateParameters, Json
 from . import routes_blueprint
 from ..extensions.database import session
@@ -41,11 +41,15 @@ def ping():
 
 @routes_blueprint.route('/dashboard', methods=['GET'])
 def dashboard():
+    total_emails = Email.query.count()
+    total_prospects = Prospect.query.count()
+    total_cold_calls = 89 
+
     data = {
-        "total_emails": 1234,
-        "total_prospects": 567,
-        "total_cold_calls": 89,
+        "total_emails": total_emails,
+        "total_prospects": total_prospects,
+        "total_cold_calls": total_cold_calls,
         "api_status": "Alive"
     }
-    return create_response(CustomStatusCode.SUCCESS.value, "Dashboard Data Retrieved", data), 200
 
+    return create_response(CustomStatusCode.SUCCESS.value, "Dashboard Data Retrieved", data), 200
