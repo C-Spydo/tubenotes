@@ -15,7 +15,7 @@ def google_login(name: str = Json(), email: str = Json(), google_id: str = Json(
         user = get_record_by_field(User, "google_id", google_id)
 
         if not user:
-            user = User(username=name, email=email, google_id=google_id)
+            user = User(fullname=name, email=email, google_id=google_id)
             add_record_to_database(user)
 
         token = generate_jwt_token(user)
