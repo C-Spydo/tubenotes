@@ -46,7 +46,7 @@ def create_response(status: bool, message: str, data=None):
 def generate_jwt_token(user):
     payload = {
         "user_id": user.id,
-        "name": user.username,
+        "name": user.fullname,
         "email": user.email,
         "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7),
         "iat": datetime.datetime.utcnow(),
