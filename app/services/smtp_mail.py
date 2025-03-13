@@ -29,7 +29,7 @@ def resend_mail(email: Email):
 
 
 def curate_cold_mail(email: tuple[str, str], recipients: list[str]) -> Message:
-    email_body_paragraphs = email[1].split("\n\n") 
+    email_body_paragraphs = email[1].split("\n") 
 
     html_email_body = render_template('email.html', year=datetime.now().year, email_body=email_body_paragraphs)
 
