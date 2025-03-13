@@ -43,7 +43,7 @@ def ping():
 def dashboard():
     total_emails = Email.query.count()
     total_prospects = Prospect.query.count()
-    total_cold_calls = 89 
+    total_cold_calls = 89
 
     data = {
         "total_emails": total_emails,
