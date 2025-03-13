@@ -13,6 +13,18 @@ def get_record_by_field(model, field, value):
     except HTTPException as e:
         print("something went wrong")
         pass
+
+def update_record_field(model, field, value):
+    try:
+        data = session.query(model).update(getattr(model, field) == value).first()
+        print(data)
+        if data is None:
+            abort(404, f"{model.__name__} not found")
+
+        return data
+    except HTTPException as e:
+        print("something went wrong")
+        pass
         
     
 def get_list(model):

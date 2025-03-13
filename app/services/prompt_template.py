@@ -31,7 +31,7 @@ def get_cold_email_template():
                     'tackling the following potential issues againt insurance \n {potential_issues}\n'
                     'And emphasizing the following positive impacts:\n {positive_impact}\n'
                     'Assume that this email will be forwarded directly, and do not give me instructions in it'),
-        ('user',   'Curate a concise cold mail body (no subject) to get the attention of a prospective cutomer named {name} in the {industry} industry.'
+        ('user',   'Curate a concise cold mail body (no subject) to get the attention of a prospective cutomer in the {industry} industry.'
                     'The mail is to be sent by the Icebreaker Business Development team')
     ])
 
