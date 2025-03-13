@@ -23,7 +23,8 @@ class Email(database.Model):
         return {
             "id": self.id,
             "contact_name": self.prospect.contact_name,   
-            "contact_email": self.prospect.contact_email,   
+            "contact_email": self.prospect.contact_email,
+            "company_name": self.prospect.company_name,
             "title": self.title,
             "message": self.message,
             "status": self.status,
