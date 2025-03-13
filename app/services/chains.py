@@ -11,15 +11,14 @@ def get_cold_mail_chain():
             branches={
                 'positive_impact': positive_impact_extracting_chain, 
                 'potential_issues': potential_issues_extracting_chain, 
-                'metadata': RunnableLambda(lambda x: (x['industry'], x['name']))
+                'industry': RunnableLambda(lambda x: x['industry'])
             }
         )|
         RunnableLambda(
             lambda x: {
                 'positive_impact': x['branches']['positive_impact'], 
                 'potential_issues': x['branches']['potential_issues'], 
-                'industry': x['branches']['metadata'][0], 
-                'name': x['branches']['metadata'][1]
+                'industry': x['branches']['industry']
             }
         )| email_creation_chain | 
         RunnableParallel(
@@ -27,6 +26,9 @@ def get_cold_mail_chain():
                 'email': RunnableLambda(lambda x: x),
                 'title': email_title_generating_chain
             }
+        )|
+        RunnableLambda(
+            lambda x: {"title": x['branches']['title'] , "email": x['branches']['email']}
         )
     )
 

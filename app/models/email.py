@@ -1,6 +1,7 @@
 from ..extensions.database import database
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+from ..extensions import session
 
 class Email(database.Model):
     __tablename__ = 'emails'
@@ -21,11 +22,15 @@ class Email(database.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "contact_name": self.prospect["contact_name"],   
-            "contact_email": self.prospect["contact_email"],   
+            "contact_name": self.prospect.contact_name,   
+            "contact_email": self.prospect.contact_email,   
             "title": self.title,
             "message": self.message,
             "status": self.status,
             "created_at": self.created_at,
             "updated_at": self.updated_at
         }
+    
+    def update_status(self, status):
+        self.status = status
+        session.commit()
