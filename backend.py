@@ -45,6 +45,7 @@ def search_youtube_video(title, api_key):
         
         # Return the link of the first video if any results exist
         if video_results and len(video_results) > 0:
+            print('Link', video_results[0].get("link"))
             return video_results[0].get("link")
         else:
             print("No video results found for the given title.")
@@ -65,12 +66,6 @@ def get_video_transcript(video_url):
     except Exception as e:
         return None
     
-
-# Function to summarize transcript using LLM MODEL
-def summarize_text(text):
-    prompt = f"Summarize the following video transcript concisely:\n\n{text}"
-    response = client.text_generation(prompt, max_new_tokens=200, temperature=0.7)
-    return response
 
 # Function to convert summary to speech
 def text_to_speech(text, filename="summary.mp3"):
@@ -137,12 +132,12 @@ def process_with_llm(prompt, model="mistral:latest"):
     try:
         system_message = (
             "You are an assistant that can search for YouTube videos, summarize their content, and generate audio summaries. "
-            "Use tools only when necessary. Summarization should be done naturally. Always provide the correct YouTube video link at the end of the summary."
+            "Use tools only when necessary. Summarization should be done naturally."
         )
         
         full_prompt = f"{system_message}\n\nUser: {prompt}"
-        response = client.text_generation(full_prompt, max_new_tokens=500, temperature=0.7)
-        response = response.lstrip("Assistant:").strip()
+        response = client.text_generation(full_prompt, max_new_tokens=500, temperature=0.5)
+        #response = response.lstrip("Assistant:").strip()
 
         return {
             "message": {
@@ -152,7 +147,7 @@ def process_with_llm(prompt, model="mistral:latest"):
     except Exception as e:
         return {"error": f"Hugging Face API error: {str(e)}"}
     
-def handle_llm_response(llm_response):
+def handle_llm_response(llm_response, correct_video_url):
     # Check if the response contains a tool call
     if "tool_calls" in llm_response:
         responses = []
@@ -170,22 +165,25 @@ def handle_llm_response(llm_response):
                 
         # Now send the function responses back to the LLM for final processing
         final_response = process_with_llm("\n".join(responses))
-        return final_response["message"]["content"]
+        return f"Summary:\n{final_response}\n\n Video URL: {correct_video_url}"
+
     else:
         # Direct response with no function call
-        return llm_response["message"]["content"]
+        return f'{llm_response["message"]["content"]}\n\n Video URL: {correct_video_url}'
 
 
 @app.route("/summarize", methods=["POST"]) 
 def summarize_video():
     data = request.json
     user_query = data.get("user_query")
-    
+    video_url = search_youtube_video(user_query, SERPAPI_API_KEY)
+
+    if not video_url:
+        return jsonify({"error": "No video found for the given query"}), 400
+
     # Process with LLM using tool calling
     response = process_with_llm(user_query)
-    print("LLM Response:", response) 
-    llm_output = handle_llm_response(response)
-
+    llm_output = handle_llm_response(response, video_url)
     return jsonify({
         "response": llm_output
     })
