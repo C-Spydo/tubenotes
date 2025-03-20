@@ -95,7 +95,7 @@ def get_related_youtube_searches(query: str):
 
         youtube_links = [(video['title'], video['link'], change_youtube_link_to_video_id(video['link'])) for video in results['video_results']]
 
-        if(youtube_links): VideoMetadataStore.set_metadata(get_video_metadata(results['video_results']))
+        if(youtube_links): VideoMetadataStore.set_metadata(get_video_metadata(results['video_results'][0]))
 
         return youtube_links[:1]
     except:

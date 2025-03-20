@@ -16,7 +16,7 @@ def get_record_by_field(model, field, value):
 
 def get_records_by_field(model, field, value):
     try:
-        data = session.query(model).filter(getattr(model, field) == value).all()
+        data = session.query(model).filter(getattr(model, field) == value).order_by(getattr(model, "id").desc()).all()
         return data
     except HTTPException as e:
         print("something went wrong")
