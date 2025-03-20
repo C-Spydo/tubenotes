@@ -64,3 +64,21 @@ def login(email: str = Json(), password: str = Json()):
 
     except ValueError:
         return create_response(CustomStatusCode.BAD_REQUEST.value, "Error Occured"), 400
+
+@routes_blueprint.route("/api/register", methods=["POST"])
+@ValidateParameters(url_validation_error_handler)
+def register(name: str = Json(), email: str = Json(), password: str = Json()):
+    try:
+        user = get_record_by_field(User, "email", email)
+
+        if user:
+            return create_response(CustomStatusCode.FAILURE.value, "User Already Exists", {}), 400
+
+        salt = bcrypt.gensalt()
+        hash_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+        user = User(fullname=name, email=email, password=hash_password)
+        add_record_to_database(user)
+
+        return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE, {}), 200
+    except ValueError:
+        return create_response(CustomStatusCode.BAD_REQUEST.value, "Invalid Token"), 400
