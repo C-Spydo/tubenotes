@@ -15,6 +15,7 @@ EMAIL_ERROR_MESSAGE = "Failed to send mail: \n\nError message 'XX'"
 NOT_FOUND_MESSAGE = 'Not found'
 SUCCESS_MESSAGE = 'Success'
 INTERNAL_SERVER_ERROR_MESSAGE = 'Something went wrong'
+INVALID_CREDENTIALS = 'Invalid Credentials'
 
 
 DUMMY_EMAIL ="""Dear [Recipient's Name],
