@@ -14,6 +14,14 @@ def get_record_by_field(model, field, value):
         print("something went wrong")
         pass
 
+def get_records_by_field(model, field, value):
+    try:
+        data = session.query(model).filter(getattr(model, field) == value).all()
+        return data
+    except HTTPException as e:
+        print("something went wrong")
+        pass
+
 def update_record_field(model, field, value):
     try:
         data = session.query(model).update(getattr(model, field) == value).first()

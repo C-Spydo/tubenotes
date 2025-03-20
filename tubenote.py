@@ -9,7 +9,6 @@ from datetime import date
 load_dotenv()
 
 def change_youtube_link_to_video_id(link: str):
-    print('here')
     return link.replace("https://www.youtube.com/watch?v=", "")
 
 def get_related_youtube_searches(query: str):

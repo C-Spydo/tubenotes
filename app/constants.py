@@ -32,3 +32,27 @@ FUNCTION_CALL_SYSTEM_INSTRUCTION = """
 "and would not need to watch the video to understand it's content"
 "also provide the resources of the video incase the user chooses to check it"
 """
+
+FUNCTION_CALL_CONFIG = {
+    "tools": [
+        {
+            "function_declarations": [
+                {
+                    "name": "get_youtube_transcripts",
+                    "description": "Fetches YouTube transcripts for a given topic",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "query": {
+                                "type": "string",
+                                "description": "The topic of interest for which transcripts should be retrieved.",
+                            }
+                        },
+                        "required": ["query"]
+                    }
+                }
+            ]
+        }
+    ],
+
+}
