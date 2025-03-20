@@ -12,7 +12,7 @@ import bcrypt
 @ValidateParameters(url_validation_error_handler)
 def google_login(name: str = Json(), email: str = Json(), google_id: str = Json()):
     try:
-        user = get_record_by_field(User, "google_id", google_id)
+        user = get_record_by_field(User, "email", email)
 
         if not user:
             user = User(fullname=name, email=email, google_id=google_id)

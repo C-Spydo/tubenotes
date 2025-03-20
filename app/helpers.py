@@ -5,6 +5,7 @@ from functools import wraps
 import jwt
 import datetime
 from .constants import APP_SECRET_KEY
+import secrets
 
 def is_valid_number(value):
     # Check if the value is a number
@@ -44,15 +45,16 @@ def create_response(status: bool, message: str, data=None):
 
 
 def generate_jwt_token(user):
-    payload = {
-        "user_id": user.id,
-        "name": user.fullname,
-        "email": user.email,
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7),
-        "iat": datetime.datetime.utcnow(),
-    }
-
-    token = jwt.encode(payload, APP_SECRET_KEY, algorithm="HS256")
+    token = secrets.token_hex(16)
+    # payload = {
+    #     "user_id": user.id,
+    #     "name": user.fullname,
+    #     "email": user.email,
+    #     "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7),
+    #     "iat": datetime.datetime.utcnow(),
+    # }
+    #
+    # token = jwt.encode(payload, APP_SECRET_KEY, algorithm="HS256")
     return token
 
 def token_required(f):
