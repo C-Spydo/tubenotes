@@ -15,6 +15,7 @@ YOUTUBE_TRANSCRIPTS_ERROR_MESSAGE = "Failed to fetch transcripts, pls try again 
 NOT_FOUND_MESSAGE = 'Not found'
 SUCCESS_MESSAGE = 'Success'
 INTERNAL_SERVER_ERROR_MESSAGE = 'Something went wrong'
+INVALID_CREDENTIALS = 'Invalid Credentials'
 
 
 SYSTEM_INSTRUCTION = """

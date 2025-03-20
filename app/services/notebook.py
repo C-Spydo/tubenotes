@@ -5,9 +5,12 @@ from ..constants import *
 from ..repository import base
 from ..models import User, Notebook
 from ..helpers import add_record_to_database
+from ..util.video_metadata import VideoMetadataStore
 from flask import abort
+import jsonpickle
 
 client = genai.Client(api_key=GEMINI_API_KEY)
+
 def get_user_notebooks(id: int):
     notebooks = base.get_records_by_field(Notebook, "user_id", id)
     return {'notebooks' : [notebook.serialize() for notebook in notebooks]}
@@ -23,10 +26,22 @@ def get_note_from_query(user_id: int, query: str):
 
     final_response = get_llm_final_response(first_response)
 
-    notebook = Notebook(user_id=user_id, title=query, video_info="", note=final_response)
+    metadata = VideoMetadataStore.get_metadata()
+    notebook = Notebook(user_id=user_id, title=query, video_info=jsonpickle.encode(metadata), note=final_response)
     add_record_to_database(notebook)
 
-    return {'query': query, "response": final_response}
+    return {'query': query, "response": final_response, "metadata": metadata}
+
+def get_video_metadata(video_data):
+    return {
+            "title": video_data["title"],
+            "link": video_data["link"],
+            "description": video_data.get("snippet", "No description available."),
+            "thumbnail": video_data.get("thumbnail"),
+            "views": video_data.get("views"),
+            "length": video_data.get("length"),
+            "published_date": video_data.get("published_date"),
+        }
 
 def get_llm_final_response(response):
     if hasattr(response, "text") and response.text:
@@ -70,15 +85,21 @@ def get_youtube_transcripts(query: str):
 
 
 def get_related_youtube_searches(query: str):
-    client = serpapi.Client(api_key=os.getenv('SERPAPI_API_KEY'))
+    try:
+        client = serpapi.Client(api_key=SERPAPI_API_KEY)
 
-    results = client.search({
-        'search_query': query,
-        'engine': 'youtube'
-    })
+        results = client.search({
+            'search_query': query,
+            'engine': 'youtube'
+        })
 
-    youtube_links = [(video['title'], video['link'], change_youtube_link_to_video_id(video['link'])) for video in results['video_results']]
-    return youtube_links[:1]
+        youtube_links = [(video['title'], video['link'], change_youtube_link_to_video_id(video['link'])) for video in results['video_results']]
+
+        if(youtube_links): VideoMetadataStore.set_metadata(get_video_metadata(results['video_results']))
+
+        return youtube_links[:1]
+    except:
+        abort(YOUTUBE_TRANSCRIPTS_ERROR_MESSAGE), 500
 
 def format_transcripts(video_data: tuple[str, str]):
     ytt_api = YouTubeTranscriptApi()

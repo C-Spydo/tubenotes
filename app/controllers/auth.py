@@ -1,4 +1,4 @@
-from app.constants import SUCCESS_MESSAGE
+from app.constants import SUCCESS_MESSAGE, INVALID_CREDENTIALS
 from app.enums.custom_status_code import CustomStatusCode
 from app.error_handler import url_validation_error_handler
 from app.helpers import create_response, get_record_by_field, add_record_to_database, generate_jwt_token, token_required
@@ -6,7 +6,7 @@ from app.models import User, UserSession
 from flask_parameter_validation import ValidateParameters, Json
 from . import routes_blueprint
 from ..extensions.database import session
-
+import bcrypt
 
 @routes_blueprint.route("/api/auth/google", methods=["POST"])
 @ValidateParameters(url_validation_error_handler)
@@ -40,3 +40,25 @@ def logout(user_id):
 @routes_blueprint.route('/ping', methods=['GET'])
 def ping():
     return create_response(CustomStatusCode.SUCCESS.value, "API is Awake"), 200
+
+@routes_blueprint.route("/api/login", methods=["POST"])
+@ValidateParameters(url_validation_error_handler)
+def login(email: str = Json(), password: str = Json()):
+    try:
+        user = get_record_by_field(User, "email", email)
+
+        if not user:
+            return create_response(CustomStatusCode.FAILURE.value, "Invalid Credentials", {}), 400
+
+        if(bcrypt.checkpw(password.encode('utf-8'), password)):
+            token = generate_jwt_token(user)
+            session = UserSession(user_id=user.id, token=token)
+            add_record_to_database(session)
+
+            return create_response(CustomStatusCode.SUCCESS.value, SUCCESS_MESSAGE, {"id": user.id, "token": token,
+                                                                                     "email": email, "name": user.name}), 200
+
+        return create_response(CustomStatusCode.FAILURE.value, INVALID_CREDENTIALS, {}), 400
+
+    except ValueError:
+        return create_response(CustomStatusCode.BAD_REQUEST.value, "Error Occured"), 400
