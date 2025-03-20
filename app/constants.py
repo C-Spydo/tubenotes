@@ -3,6 +3,9 @@ import os
 DATABASE_URL = os.getenv('DATABASE_URL')
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+SERPAPI_API_KEY = os.getenv('SERPAPI_API_KEY')
+
 #Flask Config
 APP_SECRET_KEY = os.getenv('APP_SECRET_KEY')
 
