@@ -7,6 +7,7 @@ from ..models import User, Notebook
 from ..helpers import add_record_to_database
 from ..util.video_metadata import VideoMetadataStore
 from flask import abort
+from .sentiment import analyze_sentiment
 import jsonpickle
 
 client = genai.Client(api_key=GEMINI_API_KEY)
@@ -27,21 +28,14 @@ def get_note_from_query(user_id: int, query: str):
     final_response = get_llm_final_response(first_response)
 
     metadata = VideoMetadataStore.get_metadata()
+
+    metadata['sentiment'] = analyze_sentiment(final_response)
+
     notebook = Notebook(user_id=user_id, title=query, video_info=jsonpickle.encode(metadata), note=final_response)
     add_record_to_database(notebook)
 
     return {'query': query, "response": final_response, "metadata": metadata}
 
-def get_video_metadata(video_data):
-    return {
-            "title": video_data["title"],
-            "link": video_data["link"],
-            "description": video_data.get("snippet", "No description available."),
-            "thumbnail": video_data.get("thumbnail"),
-            "views": video_data.get("views"),
-            "length": video_data.get("length"),
-            "published_date": video_data.get("published_date"),
-        }
 
 def get_llm_final_response(response):
     if hasattr(response, "text") and response.text:
@@ -115,6 +109,17 @@ def format_transcripts(video_data: tuple[str, str]):
 
 def change_youtube_link_to_video_id(link: str):
     return link.replace("https://www.youtube.com/watch?v=", "")
+
+def get_video_metadata(video_data):
+    return {
+            "title": video_data["title"],
+            "link": video_data["link"],
+            "description": video_data.get("snippet", "No description available."),
+            "thumbnail": video_data.get("thumbnail"),
+            "views": video_data.get("views"),
+            "length": video_data.get("length"),
+            "published_date": video_data.get("published_date"),
+        }
 
 
 
