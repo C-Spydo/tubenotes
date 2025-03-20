@@ -12,9 +12,7 @@ def change_youtube_link_to_video_id(link: str):
     print('here')
     return link.replace("https://www.youtube.com/watch?v=", "")
 
-def get_related_youtube_searches(query):
-    print('here')
-
+def get_related_youtube_searches(query: str):
     client = serpapi.Client(api_key=os.getenv('SERPAPI_API_KEY'))
 
     results = client.search({
@@ -26,7 +24,6 @@ def get_related_youtube_searches(query):
     return youtube_links[:1]
 
 def format_transcripts(video_data: tuple[str, str]):
-    print('here')
     ytt_api = YouTubeTranscriptApi()
 
     youtube_transcripts = []
@@ -38,44 +35,29 @@ def format_transcripts(video_data: tuple[str, str]):
     
     return youtube_transcripts
 
-# def get_youtube_transcripts(query: str) -> str:
-#     video_data = get_related_youtube_searches(query)
+def get_youtube_transcripts(query: str):
+    try:
+        video_data = get_related_youtube_searches(query)
 
-#     transcripts = format_transcripts(video_data)
-
-#     return "\n\n".join(transcripts) 
-
-
-def get_youtube_transcripts(query):
-    ''' returns relevant youtube transcripts about any fact'''
-
-    print('here')
-    client = serpapi.Client(api_key=os.getenv('SERPAPI_API_KEY'))
-
-    results = client.search({
-        'search_query': query,
-        'engine': 'youtube'
-    })
-
-    youtube_links = [(video['title'], video['link'], video['link'].replace("https://www.youtube.com/watch?v=", "")) for video in results['video_results']]
-    youtube_links[:1]
-
-    ytt_api = YouTubeTranscriptApi()
-
-    youtube_transcripts = []
-    for title, link, video_id in youtube_links[:1]:
-        transcripts = ytt_api.fetch(video_id)
-        transcript_text = " ".join([transcript.text for transcript in transcripts])
-
-        youtube_transcripts.append(f'''Title: {title}\nLink: {link}\nTranscript:\n {transcript_text}\n''')
-
-    return "\n\n".join(youtube_transcripts) 
+        return format_transcripts(video_data)
+    except:
+        print('Could not fetch YouTube transcripts')
 
 
 system_instruction = """
-You are an AI that gives a comprehensive information to users. Refer to tools for using information, query might be a youtube video.
-If a user request benefits from real-world video transcripts or fits video title perfectly use YouTube transcripts for additional context and return the resource used. 
-If no relevant transcripts are found, proceed with the best available information.
+"You are an assistant that can give wholesome information based on YouTube transcripts"
+"Use tools only when necessary, ensure the user catches a full picture when using transcripts."
+"The user does not need to specify a YouTube link, YouTube is a resource for getting the user any information they need"
+"If you decide to get information from YouTube, use the tools available"
+"Don't tell the user about your plans to use the tools, just use it"
+"Do not hallucinate"
+"""
+
+function_call_system_instruction = """
+"You are an assistant that can perfectly the occurences from a YouTube transcript,"
+" your users are able to understand a video from your description of the transcript"
+"and would not need to watch the video to understand it's content"
+"also provide the resources of the video incase the user chooses to check it"
 """
 
 config = {
@@ -99,71 +81,51 @@ config = {
             ]
         }
     ],
-    # 'system_instruction': system_instruction
+
 }
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-# chat = client.chats.create(
-#     model="gemini-1.5-flash",
-#     config = {
-#         "tools": [get_youtube_transcripts],
-#         "automatic_function_calling": {"disable": True} # This line is not needed as automatic_function_calling is enabled by default
-#     }
-# )
-
-# Call Gemini to trigger function execution
 response = client.models.generate_content(
-    model="gemini-1.5-flash",
+    model="gemini-1.5-pro",
     config=config,
-    contents=f"{system_instruction}\n\n User Query: What happened to Jimmy Carter video" ,
+    contents=f"{system_instruction}\n\n User Query: Understanding RAG" ,
 )
 
-print(response.text)
-print(response)
-
-# def call_function(function_call, functions):
-#     function_name = function_call.name
-#     function_args = function_call.args
-#     # Find the function object from the list based on the function name
-#     for func in functions:
-#         if func.__name__ == function_name:
-#             return func(**function_args)
-
-# if(response.candidates[0].content.parts[0]):
-#     part = response.candidates[0].content.parts[0]
-
-#     result = ''
-#     # Check if it's a function call; in real use you'd need to also handle text
-#     # responses as you won't know what the model will respond with.
-#     if part.function_call:
-#         result = call_function(part.function_call, get_youtube_transcripts)
-
-#     print(result)
-# response = chat.send_message(
-#     f"{system_instruction}\n\n User Query: Jimmy Carter"
-# )
-
+print(f'First Response: {response}')
 
 def call_function(function_call, functions):
-    function_name = function_call.get("name")
-    function_args = function_call.get("parameters", {})
+    function_name = function_call.name  # Extract function name
+    function_args = function_call.args  # Already a dictionary, no need for JSON parsing
+
+    # Fetch the function from dictionary
+    func = functions.get(function_name)
+
+    if func:
+        return func(**function_args)  # Call the function with unpacked arguments
+
+    return f"Error: Function '{function_name}' not found."
+
+def get_llm_final_response(response):
+    if hasattr(response, "text") and response.text:
+        return response.text
     
-    for func in functions:
-        if func.__name__ == function_name:
-            return func(**function_args)
-    return None
+    part = response.candidates[0].content.parts[0]
 
-if response and response.candidates:
-    candidate = response.candidates[0]
+    available_functions = {
+        "get_youtube_transcripts": get_youtube_transcripts
+    }
 
-    if candidate and candidate.content and candidate.content.parts:
-        part = candidate.content.parts[0]
+    result = ""
+    if part.function_call:
+        result = call_function(part.function_call, available_functions)
 
-        result = "No function call detected"
-        if part.function_call:
-            result = call_function(part.function_call, [get_youtube_transcripts])
+    response = client.models.generate_content(
+        model="gemini-1.5-pro",
+        config=config,
+        contents=f"{function_call_system_instruction}\n\n Video Transcript: {result}",
+    )
 
-        print(result)
-# print(response.text)
-# print(response)
+    return response.text
+
+print(f'Final Response: {get_llm_final_response(response)}')
