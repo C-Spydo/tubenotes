@@ -9,6 +9,7 @@ from ..util.video_metadata import VideoMetadataStore
 from flask import abort
 from .sentiment import analyze_sentiment
 import jsonpickle
+from youtube_transcript_api.proxies import WebshareProxyConfig
 
 client = genai.Client(api_key=GEMINI_API_KEY)
 
@@ -96,8 +97,13 @@ def get_related_youtube_searches(query: str):
         abort(YOUTUBE_TRANSCRIPTS_ERROR_MESSAGE), 500
 
 def format_transcripts(video_data: tuple[str, str]):
-    ytt_api = YouTubeTranscriptApi()
-
+    # ytt_api = YouTubeTranscriptApi()
+    ytt_api = YouTubeTranscriptApi(
+        proxy_config=WebshareProxyConfig(
+            proxy_username="mqrwokvs",
+            proxy_password="z6v8pne3z7bg",
+        )
+    )
     youtube_transcripts = []
     for title, link, video_id in video_data:
         transcripts = ytt_api.fetch(video_id)
