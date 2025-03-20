@@ -32,8 +32,6 @@ def initialize_extensions(app):
 
     db_migration.init_app(app, database)
 
-    mail.init_app(app)
-
 
 def register_blueprints(app):
     app.register_blueprint(routes_blueprint)
