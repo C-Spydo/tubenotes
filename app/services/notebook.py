@@ -5,6 +5,7 @@ from ..constants import *
 from ..repository import base
 from ..models import User, Notebook
 from ..helpers import add_record_to_database
+from flask import abort
 
 client = genai.Client(api_key=GEMINI_API_KEY)
 def get_user_notebooks(id: int):
@@ -65,7 +66,7 @@ def get_youtube_transcripts(query: str):
 
         return format_transcripts(video_data)
     except:
-        print('Could not fetch YouTube transcripts')
+        abort(YOUTUBE_TRANSCRIPTS_ERROR_MESSAGE), 500
 
 
 def get_related_youtube_searches(query: str):
