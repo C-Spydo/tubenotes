@@ -128,7 +128,9 @@ def get_video_metadata(video_data):
         }
 
 
-
+def get_user_total_notebooks(user_id: int):
+    total_notebooks = base.get_total_records_by_field(Notebook,"user_id", user_id)
+    return {'total_summaries': total_notebooks}
 
 
 
